@@ -4,27 +4,12 @@ from typing import Optional
 from dataclasses import dataclass
 from agents import Agent, Runner, function_tool
 from openai.types.responses import ResponseTextDeltaEvent
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 from setup_config import config
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
-
-load_dotenv()
-frontend_url = os.getenv("FRONTEND_URL")
-print(frontend_url)
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://ai-agents-projects.vercel.app",frontend_url], # type: ignore
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 class ChatRequest(BaseModel):
     message: str
@@ -98,39 +83,25 @@ weather_assistant = Agent(
    """,
    tools=[get_weather]
 )
-    
+
 @app.post("/weather-stream")
 async def stream_weather(req: ChatRequest):
-   message = req.message
+    message = req.message
 
-   async def event_generator():
-        result = Runner.run_streamed(weather_assistant, message, run_config=config)
+    async def event_generator():
+            result = Runner.run_streamed(weather_assistant, message, run_config=config)
 
-        async for event in result.stream_events():
-            # if event.type == "raw_response_event" and hasattr(event.data, 'delta'):
-            if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
-               # yield event.data.delta
-               yield event.data.delta.encode("utf-8")
-   
-   return StreamingResponse(
-      event_generator(),
-      media_type="text/event-stream",
-      headers={
+            async for event in result.stream_events():
+                if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+                    yield event.data.delta
+                
+   # this method is for working with next js api route, this gives EventSourceResponse to nextjs api route 
+    return EventSourceResponse(
+        event_generator(),
+        headers={
             "Cache-Control": "no-cache",
+            "Content-Type": "text/event-stream",
             "Connection": "keep-alive",
-            "Transfer-Encoding": "chunked",
-      }
-   )
-   
-
-# Without Streaming
-# async def main(msg:str):
-#    runner = Runner()
-  
-#    weather_runner = await runner.run(weather_assistant, msg, run_config=config)
-  
-#    return weather_runner.final_output
-
-# @app.post("/weather")
-# async def weather_endpoint(req: ChatRequest):
-#     return {"response": await main(req.message)}
+            "X-Accel-Buffering": "no"
+        }
+    )

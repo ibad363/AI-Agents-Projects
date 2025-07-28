@@ -1,0 +1,13 @@
+[project]
+name = "personal-study-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "browser-use>=0.5.6",
+    "langchain>=0.3.27",
+    "langchain-google-genai>=2.1.8",
+    "openai-agents>=0.2.3",
+    "python-dotenv>=1.1.1",
+]
