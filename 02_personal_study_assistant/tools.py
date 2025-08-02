@@ -4,7 +4,7 @@ import google.generativeai as genai
 from agents import function_tool
 
 SERPER_API_KEY = os.getenv("SERPER_API_KEY")
-print("SERPER_API_KEY:", SERPER_API_KEY)
+# print("SERPER_API_KEY:", SERPER_API_KEY)
 
 @function_tool()
 async def web_search(query: str) -> str:

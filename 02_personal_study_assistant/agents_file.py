@@ -15,7 +15,7 @@ summarizer_agent = Agent(
 research_agent = Agent(
     name="TopicResearchAgent",
     instructions=(
-        "You are a Research Assistant Agent. When a user provides study topics, use the `web_search` tool "
+        "You are a Research Assistant Agent. When a user provides study topics, use the `web_search` tool"
         "to find credible, high-quality resources (e.g., academic articles, videos, blogs, documentation). "
         "Return a list of resources for each topic, including titles, short descriptions, and direct URLs. "
         "Once research is gathered, automatically hand off the content to the KnowledgeSummarizerAgent "
