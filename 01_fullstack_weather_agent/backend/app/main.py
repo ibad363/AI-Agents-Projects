@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
-from setup_config import config
+from app.setup_config import config
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
