@@ -29,6 +29,13 @@ export default function ChatUI() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
       });
+      // handle error
+      if (!response.ok) {
+        setMessages((prev) => [...prev, {
+          role: "assistant", text: "Error While Getting Response"
+        }]);
+        return
+      }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
