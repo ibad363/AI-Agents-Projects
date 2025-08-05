@@ -1,0 +1,5 @@
+{
+  "build": {
+    "root": "01_fullstack_weather_agent/backend"
+  }
+}
